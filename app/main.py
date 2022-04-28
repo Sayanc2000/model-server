@@ -1,16 +1,45 @@
-from tkinter.tix import FileSelectBox
+import uvicorn
+from io import BytesIO
+from PIL import Image
 from fastapi import FastAPI, File, UploadFile
-from typing import Optional
+from tensorflow.keras.models import load_model
+from tensorflow.keras.preprocessing.image import load_img, img_to_array
+
+# from tensorflow.keras.models import load_model
+# from keras.preprocessing.image import load_img, img_to_array
 
 app = FastAPI()
+model = load_model('model_88%.h5')
+
+
+def process_image(file):
+    img = img_to_array(file)
+    img = img.reshape(1, 50, 50, 3)
+    img = img.astype('float32')
+
+    return img
+
+
+def read_image(file) -> Image.Image:
+    image = Image.open(BytesIO(file))
+    return image
+
 
 @app.get("/")
-def root():
+async def root():
     return {"message": "Hello World"}
 
-@app.post("/check/")
-def check(file: Optional[UploadFile] = None):
-    return {
-        "file_name": file.filename,
-        "file_content": file.file.read().decode("utf-8")
-    }
+
+@app.post("/predict/image")
+async def predict(file: UploadFile = File(...)):
+    f = await file.read()
+    image = read_image(f)
+    img = process_image(image)
+
+    x = model.predict(img).argmax()
+
+    return {"response": x}
+
+
+if __name__ == "__main__":
+    uvicorn.run(app, port=8000, host="0.0.0.0")
