@@ -34,15 +34,19 @@ async def root():
 async def predict(file: UploadFile = File(...)):
     try:
         f = await file.read()
-        image = read_image(f)
-        img = process_image(image)
-
-        x = model.predict(img).argmax()
-
-        return {"response": x}
     except Exception as e:
         print(e)
         return {"response": "error"}
+    try:
+        image = read_image(f)
+        img = process_image(image)
+        x = model.predict(img).argmax()
+        
+    except Exception as e:
+        print(e)
+        return {"response": "error"}
+
+    return {"response": x}
 
 if __name__ == "__main__":
     uvicorn.run(app, port=8000, host="0.0.0.0")
