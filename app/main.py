@@ -41,14 +41,12 @@ async def predict(file: UploadFile = File(...)):
         image = read_image(f)
         img = process_image(image)
         x = model.predict(img).argmax()
-
-        print(x)
         
     except Exception as e:
         print(e)
         return {"response": "error"}
 
-    return {"response": 'success'}
+    return {"response": str(x)}
 
 if __name__ == "__main__":
     uvicorn.run(app, port=8000, host="0.0.0.0")
