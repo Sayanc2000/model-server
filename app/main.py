@@ -13,6 +13,8 @@ model = load_model('model_88%.h5')
 
 
 def process_image(file):
+    print('yes here')
+    # img = load_img()
     img = img_to_array(file)
     img = img.reshape(1, 50, 50, 3)
     img = img.astype('float32')
@@ -21,6 +23,7 @@ def process_image(file):
 
 
 def read_image(file) -> Image.Image:
+    print('read_image')
     image = Image.open(BytesIO(file))
     return image
 
@@ -34,6 +37,7 @@ async def root():
 async def predict(file: UploadFile = File(...)):
     try:
         f = await file.read()
+        print(f, type(f))
     except Exception as e:
         print(e)
         return {"response": "error"}
