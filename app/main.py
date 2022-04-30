@@ -37,7 +37,7 @@ async def root():
 async def predict(file: UploadFile = File(...)):
     try:
         f = await file.read()
-        print(f, type(f))
+        print(file)
     except Exception as e:
         print(e)
         return {"response": "error"}
