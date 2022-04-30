@@ -13,18 +13,16 @@ model = load_model('model_88%.h5')
 
 
 def process_image(file):
-    print('yes here')
     # img = load_img(path, target_size=(50,50))
     img = img_to_array(file)
     img = img.reshape(1, 50, 50, 3)
     img = img.astype('float32')
-
+    print('yes done')
     return img
 
 
 def read_image(file) -> Image.Image:
     image = Image.open(BytesIO(file))
-    print(type(image))
     return image
 
 
@@ -44,6 +42,7 @@ async def predict(file: UploadFile = File(...)):
     try:
         image = read_image(f)
         img = process_image(image)
+        print(img)
         x = model.predict(img).argmax()
         
     except Exception as e:
