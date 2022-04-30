@@ -34,7 +34,6 @@ async def root():
 async def predict(file: UploadFile = File(...)):
     try:
         f = await file.read()
-        print(file)
     except Exception as e:
         print(e)
         return {"response": "error"}
@@ -43,13 +42,13 @@ async def predict(file: UploadFile = File(...)):
         img = process_image(image)
         x = model.predict(img).argmax()
 
-        print('done bitch')
+        print(x)
         
     except Exception as e:
         print(e)
         return {"response": "error"}
 
-    return {"response": x}
+    return {"response": 'success'}
 
 if __name__ == "__main__":
     uvicorn.run(app, port=8000, host="0.0.0.0")
