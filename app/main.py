@@ -42,8 +42,7 @@ async def predict(file: UploadFile = File(...)):
     try:
         image = read_image(f)
         img = process_image(image)
-        print(img)
-        x = model.predict(img).argmax()
+        x = model.predict(img)
         
     except Exception as e:
         print(e)
