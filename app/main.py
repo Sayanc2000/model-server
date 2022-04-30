@@ -12,19 +12,20 @@ app = FastAPI()
 model = load_model('model_88%.h5')
 
 
-def process_image(img):
-    # img = load_img('test.png', target_size=(50,50))
-    img = img_to_array(img)
+def process_image(file):
+    print('yes here')
+    # img = load_img(path, target_size=(50,50))
+    img = img_to_array(file)
     img = img.reshape(1, 50, 50, 3)
     img = img.astype('float32')
 
     return img
 
 
-# def read_image(file):
-#     strin = file.decode('utf-8')
-#     with open('test.png', 'w') as f:
-#         f.write(strin)
+def read_image(file) -> Image.Image:
+    image = Image.open(BytesIO(file))
+    print(type(image))
+    return image
 
 
 @app.get("/")
@@ -33,10 +34,16 @@ async def root():
 
 
 @app.post("/predict/image")
-def predict(file: UploadFile = File(...)):
-    f = file.file
+async def predict(file: UploadFile = File(...)):
     try:
-        img = process_image(f)
+        f = await file.read()
+        print(file)
+    except Exception as e:
+        print(e)
+        return {"response": "error"}
+    try:
+        image = read_image(f)
+        img = process_image(image)
         x = model.predict(img).argmax()
         
     except Exception as e:
