@@ -17,7 +17,6 @@ def process_image(file):
     img = img_to_array(file)
     img = img.reshape(1, 50, 50, 3)
     img = img.astype('float32')
-    print('yes done')
     return img
 
 
@@ -42,7 +41,9 @@ async def predict(file: UploadFile = File(...)):
     try:
         image = read_image(f)
         img = process_image(image)
-        x = model.predict(img)
+        x = model.predict(img).argmax()
+
+        print('done bitch')
         
     except Exception as e:
         print(e)
